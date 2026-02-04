@@ -8,8 +8,10 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
-  alipay_app: ^0.1.0
-  alipay_qr: ^0.1.0
+  alipay_app:
+    path: ../alipay_app
+  alipay_qr:
+    path: ../alipay_qr
 
 dev_dependencies:
   test: ^1.24.0
