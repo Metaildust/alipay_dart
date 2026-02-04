@@ -1,0 +1,16 @@
+name: alipay_serverpod
+description: Alipay Serverpod integration - reads credentials from passwords.yaml
+version: 0.1.0
+repository: https://github.com/Metaildust/alipay_dart
+homepage: https://pub.dev/packages/alipay_serverpod
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  alipay: ^0.1.0
+  pointycastle: ^3.9.1
+  serverpod: ^3.2.3
+
+dev_dependencies:
+  test: ^1.24.0

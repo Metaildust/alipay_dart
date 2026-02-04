@@ -1,0 +1,15 @@
+name: alipay_app
+description: Alipay App Pay order builder for Dart/Flutter (server-side).
+version: 0.1.0
+repository: https://github.com/Metaildust/alipay_dart
+homepage: https://pub.dev/packages/alipay_app
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  crypto: ^3.0.7
+  pointycastle: ^3.9.1
+
+dev_dependencies:
+  test: ^1.24.0
