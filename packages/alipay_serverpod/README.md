@@ -6,6 +6,65 @@ Serverpod integration for Alipay App Pay + QR Pay.
 
 [中文文档](README.zh.md)
 
+## Prerequisites
+
+Before using this package, you need to complete the following steps on Alipay platforms.
+
+### Step 1: Register Alipay Merchant Account
+
+1. Go to [Alipay Merchant Platform](https://b.alipay.com/)
+2. Register a merchant account (requires business license for enterprise, or personal real-name for individual)
+3. Complete account verification
+
+### Step 2: Sign Product Agreements
+
+Sign the required payment products at [Alipay Merchant Platform - Product Center](https://b.alipay.com/page/product-mall/all-product):
+
+| Feature | Product to Sign | Notes |
+|---------|-----------------|-------|
+| App Pay | **App Payment** (App支付) | For invoking Alipay app from your mobile app |
+| QR Pay | **Face-to-Face Payment** (当面付) | For generating QR codes |
+
+> **Note**: Product approval may take 1-3 business days.
+
+### Step 3: Create Application on Open Platform
+
+1. Go to [Alipay Open Platform Console](https://open.alipay.com/develop/manage)
+2. Click **Create Application** → Select **Mobile/Web App**
+3. Fill in basic information and submit for review
+4. After approval, note down your **App ID**
+
+### Step 4: Configure Keys
+
+1. In your application page, go to **Development Settings** → **Interface Signing Method**
+2. Choose **Self-upload Public Key** mode
+3. Generate RSA2 key pair (2048-bit):
+
+```bash
+# Generate private key
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out private_key.pem
+
+# Export public key
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+
+# Get public key string (upload this to Alipay)
+grep -v "^-----" public_key.pem | tr -d '\n' && echo
+
+# Get private key string for passwords.yaml (Base64 DER format)
+openssl rsa -in private_key.pem -outform DER | base64
+```
+
+4. Upload the public key string to Alipay console
+5. Download the **Alipay Public Key** (支付宝公钥) from console after upload
+6. Save both keys for configuration below
+
+> **Official Docs**: [Key Configuration Guide](https://opendocs.alipay.com/common/02kipl)
+
+### Step 5: Bind Products to Application
+
+1. In your application page, go to **Product bindng** (产品绑定)
+2. Add the products you signed in Step 2
+
 ## Features
 
 - **Config Integration** - Read sensitive keys from `passwords.yaml`, keep non-sensitive config in `server.dart`
@@ -135,11 +194,37 @@ Parsed notify payload with helper fields:
 
 ## Troubleshooting
 
-| Issue | Cause | Fix |
-|------|-------|-----|
-| Missing passwords | Keys not in `passwords.yaml` | Add `alipayRsa2PrivateKey` and `alipayPublicKey` |
-| Signature verification failed | Public key format mismatch | Use Base64 DER public key from Alipay console |
-| Notify not triggered | URL unreachable | Ensure HTTPS and public access |
+| Issue | Error Code | Cause | Fix |
+|-------|------------|-------|-----|
+| Missing passwords | - | Keys not in `passwords.yaml` | Add `alipayRsa2PrivateKey` and `alipayPublicKey` |
+| Invalid signature | `isv.invalid-signature` / `40002` | Private key doesn't match public key on Alipay | Re-upload public key to Alipay console, ensure private key matches |
+| Insufficient permissions | `isv.insufficient-isv-permissions` / `40006` | Product not signed or not bound | Sign product at [Merchant Platform](https://b.alipay.com/), bind to app at [Open Platform](https://open.alipay.com/) |
+| App ID not found | `isv.invalid-app-id` | Wrong App ID or app not approved | Check App ID, ensure app status is "Online" |
+| Notify not triggered | - | URL unreachable | Ensure HTTPS with valid certificate, public network access |
+| Base64 decode error | `FormatException: Invalid padding` | Extra characters in private key | Remove trailing whitespace/newlines from key string |
+
+### Common Configuration Errors
+
+**1. Key Mismatch (isv.invalid-signature)**
+
+The most common error. Verify your keys match:
+
+```bash
+# Export public key from your private key
+echo "YOUR_PRIVATE_KEY_BASE64" | base64 -d | openssl rsa -inform DER -pubout
+
+# Compare with public key on Alipay console - they must be identical
+```
+
+**2. Product Not Bound (40006)**
+
+1. Check [Merchant Platform](https://b.alipay.com/) → Products → Ensure product is signed
+2. Check [Open Platform](https://open.alipay.com/) → Your App → Product Binding → Ensure product is added
+
+**3. Wrong Key Format**
+
+- `alipayRsa2PrivateKey`: Base64 encoded DER format (single line, no PEM headers)
+- `alipayPublicKey`: Base64 encoded DER format from Alipay console (NOT your public key)
 
 ## Related Packages
 

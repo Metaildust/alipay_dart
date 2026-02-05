@@ -6,6 +6,61 @@
 
 [中文文档](README.zh.md)
 
+## Prerequisites
+
+Before using this package, you need to complete the following steps on Alipay platforms.
+
+### Step 1: Register Alipay Merchant Account
+
+1. Go to [Alipay Merchant Platform](https://b.alipay.com/)
+2. Register a merchant account (requires business license for enterprise, or personal real-name for individual)
+3. Complete account verification
+
+### Step 2: Sign Product Agreements
+
+Sign the required payment products at [Alipay Merchant Platform - Product Center](https://b.alipay.com/page/product-mall/all-product):
+
+| Feature | Product to Sign | Notes |
+|---------|-----------------|-------|
+| App Pay | **App Payment** (App支付) | For invoking Alipay app from your mobile app |
+| QR Pay | **Face-to-Face Payment** (当面付) | For generating QR codes |
+
+> **Note**: Product approval may take 1-3 business days.
+
+### Step 3: Create Application on Open Platform
+
+1. Go to [Alipay Open Platform Console](https://open.alipay.com/develop/manage)
+2. Click **Create Application** → Select **Mobile/Web App**
+3. Fill in basic information and submit for review
+4. After approval, note down your **App ID**
+
+### Step 4: Configure Keys
+
+1. In your application page, go to **Development Settings** → **Interface Signing Method**
+2. Choose **Self-upload Public Key** mode
+3. Generate RSA2 key pair (2048-bit):
+
+```bash
+# Generate private key
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out private_key.pem
+
+# Export public key (upload this to Alipay)
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+```
+
+4. Upload the public key to Alipay console
+5. Download the **Alipay Public Key** (支付宝公钥) from console after upload
+
+> **Official Docs**: 
+> - [Key Configuration Guide](https://opendocs.alipay.com/common/02kipl)
+> - [App Pay API](https://opendocs.alipay.com/open/204/105051)
+> - [Face-to-Face Payment API](https://opendocs.alipay.com/open/194/106078)
+
+### Step 5: Bind Products to Application
+
+1. In your application page, go to **Product binding** (产品绑定)
+2. Add the products you signed in Step 2
+
 ## Why Use This Package?
 
 This package bundles both App Pay and QR Pay in one dependency:

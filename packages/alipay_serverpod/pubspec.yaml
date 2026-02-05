@@ -8,8 +8,7 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
-  alipay:
-    path: ../alipay
+  alipay: ^0.1.0
   pointycastle: ">=3.9.1 <5.0.0"
   serverpod: ^3.2.3
 

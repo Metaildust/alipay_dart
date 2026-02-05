@@ -61,6 +61,7 @@ class AlipayAppClient {
       subject: subject,
       timestamp: now,
       passbackParams: passbackParams,
+      signContent: signContent,
     );
   }
 }

@@ -6,6 +6,9 @@ class AppPayOrder {
   final String? passbackParams;
   final DateTime timestamp;
 
+  /// The content that was signed (for debugging).
+  final String? signContent;
+
   const AppPayOrder({
     required this.orderString,
     required this.outTradeNo,
@@ -13,5 +16,6 @@ class AppPayOrder {
     required this.subject,
     required this.timestamp,
     this.passbackParams,
+    this.signContent,
   });
 }
